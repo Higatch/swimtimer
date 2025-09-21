@@ -15,35 +15,35 @@ body{margin:0;background:var(--bg);padding:1rem;display:flex;justify-content:cen
 #wrap{width:100%;max-width:420px;text-align:center}
 h1{margin:.2em 0 .5em 0;font-size:1.6rem;letter-spacing:.04em}
 
-/* ─── 設定欄 ─── */
+/* ─── Global Settings ─── */
 .controls{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .control{background:var(--panel);padding:.5rem;border-radius:6px}
 .control label{font-size:.7rem;display:block;margin-bottom:2px;opacity:.7}
 .control input{width:100%;padding:.3rem;border:0;border-radius:4px;font-size:1rem;color:#000}
 
-/* ─── 名前テーブル ─── */
+/* ─── name tables ─── */
 table{width:100%;border-collapse:collapse;margin-bottom:.6rem}
 th,td{border:1px solid #455a64;font-size:.75rem;padding:.2rem}
 th{background:var(--panel)}
 td input{width:100%;border:0;padding:.2rem;font-size:.75rem;background:transparent;color:var(--txt);text-align:center}
 
-/* ─── タイマー表示 ─── */
+/* ─── Display timer ─── */
 #time{font-size:3rem;margin:.3em 0}
 #next{margin:.2em 0 .4em 0;font-size:1.1rem}
 #remain{font-size:.9rem;opacity:.8}
 
-/* ─── ボタン ─── */
+/* ─── Buttons ─── */
 button{border:0;border-radius:6px;font-size:1rem;padding:.4rem 1.2rem;margin:.25rem}
 .btn{background:var(--btn);cursor:pointer}
 .btnOff{background:var(--btnOff);cursor:not-allowed}
 #export{display:none;background:mediumslateblue}
 
-/* ─── Lap ボタン ─── */
+/* ─── Laps ─── */
 .gridLap{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.6rem}
 .lapBtn{padding:.6rem 0;font-size:1.1rem;background:var(--btnOff);cursor:pointer}
 .lapBtn.active{background:var(--panel)}
 
-/* ─── フィード ─── */
+/* ─── feeds ─── */
 #feedWrap{display:none}
 #feed{
   height:146px;overflow-y:auto;text-align:left;
@@ -60,7 +60,7 @@ button{border:0;border-radius:6px;font-size:1rem;padding:.4rem 1.2rem;margin:.25
 <div id="wrap">
   <h1>ゴールセット用タイマー</h1>
 
-  <!-- ─── 設定入力 ─── -->
+  <!-- ─── input settings ─── -->
   <div class="controls">
     <div class="control"><label>サークル秒数</label><input id="circle" type="number" value="60"></div>
     <div class="control"><label>出発間隔秒数</label><input id="offset" type="number" value="5"></div>
@@ -68,7 +68,7 @@ button{border:0;border-radius:6px;font-size:1rem;padding:.4rem 1.2rem;margin:.25
     <div class="control"><label>セット数</label><input id="sets" type="number" value="1"></div>
   </div>
 
-  <!-- ─── 名前入力テーブル ─── -->
+  <!-- ─── name tables ─── -->
   <div id="tableWrap">
     <table>
       <thead><tr><th>Lane</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
@@ -76,15 +76,15 @@ button{border:0;border-radius:6px;font-size:1rem;padding:.4rem 1.2rem;margin:.25
     </table>
   </div>
 
-  <!-- ─── フィード ─── -->
+  <!-- ─── feeds ─── -->
   <div id="feedWrap"><div id="feed"></div></div>
 
-  <!-- ─── タイマー表示 ─── -->
+  <!-- ─── Display timer ─── -->
   <div id="time">00:00.0</div>
   <div id="next">Next: 60.0s</div>
   <div id="remain">残り本数: --</div>
 
-  <!-- ─── 操作用ボタン ─── -->
+  <!-- ─── Count Button ─── -->
   <div>
     <button id="start"  class="btn">Start</button>
     <button id="stop"   class="btnOff" disabled>Stop</button>
@@ -92,12 +92,12 @@ button{border:0;border-radius:6px;font-size:1rem;padding:.4rem 1.2rem;margin:.25
     <button id="export" class="btn">Export</button>
   </div>
 
-  <!-- ─── Lap ボタン ─── -->
+  <!-- ─── Laps ─── -->
   <div class="gridLap" id="lapGrid"></div>
 </div>
 
 <script>
-/* ────────────── 定数 & 汎用 ────────────── */
+/* ────────────── Grobal  ────────────── */
 const MAX_LANES=6, MAX_SW=5, FEED_MAX=10;
 const q=id=>document.getElementById(id);
 const fmt=t=>`${Math.floor(t/60).toString().padStart(2,'0')}:${(t%60).toFixed(1).padStart(4,'0')}`;
@@ -108,7 +108,7 @@ const startBtn=q('start'), stopBtn=q('stop'), resetBtn=q('reset'), exportBtn=q('
 const timeEl=q('time'), nextEl=q('next'), remainEl=q('remain');
 const tableWrap=q('tableWrap'), feedWrap=q('feedWrap'), feedEl=q('feed');
 
-/* ────────────── 名前入力行生成 ────────────── */
+/* ────────────── Generate name lines ────────────── */
 const bodyEl=q('nameBody');
 for(let i=0;i<MAX_LANES;i++){
   const tr=document.createElement('tr'); const th=document.createElement('th'); th.textContent=`Lane ${i+1}`; tr.appendChild(th);
@@ -116,7 +116,7 @@ for(let i=0;i<MAX_LANES;i++){
   bodyEl.appendChild(tr);
 }
 
-/* ────────────── Lap ボタン生成 ────────────── */
+/* ────────────── Generate Lap lines ────────────── */
 const lapGrid=q('lapGrid');
 for(let i=0;i<MAX_LANES;i++){
   const b=document.createElement('button');
@@ -125,7 +125,7 @@ for(let i=0;i<MAX_LANES;i++){
   lapGrid.appendChild(b);
 }
 
-/* ────────────── 状態変数 ────────────── */
+/* ────────────── state variable ────────────── */
 let lanes=[], timerOn=false,startTime=0,nextPoint=0,cycle=0,rafId=0,fullResults=[];
 
 /* ────────────── Start ────────────── */
@@ -174,7 +174,7 @@ exportBtn.onclick=()=>{
   f.appendChild(inp); document.body.appendChild(f); f.submit(); f.remove();
 };
 
-/* ────────────── メインループ ────────────── */
+/* ────────────── Loop main ────────────── */
 function tick(circle,offset,total){
   const now=performance.now(), elapsed=(now-startTime)/1000;
   timeEl.textContent=fmt(elapsed);
@@ -189,7 +189,7 @@ function tick(circle,offset,total){
   if(timerOn) rafId=requestAnimationFrame(()=>tick(circle,offset,total));
 }
 
-/* ────────────── Lap 記録 ────────────── */
+/* ────────────── Lap records ────────────── */
 function recordLap(laneIdx){
   const lane=lanes[laneIdx]; if(!lane.names.length) return;
   const circle=+circleEl.value||60, offset=+offsetEl.value||5, total=+setSizeEl.value*+setsEl.value;
@@ -201,7 +201,7 @@ function recordLap(laneIdx){
 
   fullResults.push({lane:laneIdx+1,swimmer:name,lap:lap.toFixed(1)});
 
-  /* フィード更新（HTML 要素で太字） */
+  /* reflesh feeds */
   const div=document.createElement('div'); div.className='feedEntry';
   div.innerHTML=`L${laneIdx+1} - <span class="swimmer">${name}</span>: <span class="time">${lap.toFixed(1)} s</span>`;
   feedEl.prepend(div); while(feedEl.childNodes.length>FEED_MAX) feedEl.lastChild.remove();
@@ -212,3 +212,4 @@ function recordLap(laneIdx){
 </script>
 </body>
 </html>
+
